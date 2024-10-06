@@ -13,7 +13,7 @@ export const Layout = () => {
           Favorites
         </ChakraLink>
       </HStack>
-      <Container py={4}>
+      <Container py={4} maxW="container.md">
         <Outlet />
       </Container>
     </VStack>
