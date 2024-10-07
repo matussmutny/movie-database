@@ -5,10 +5,12 @@ import {
   Input,
   VStack,
   Text,
-  Image,
+  Heading,
 } from '@chakra-ui/react'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useStore } from '../../store'
+import { MovieItem } from '../common'
+import { PAGE_SIZE } from '../../constants'
 
 type Movie = {
   Title: string
@@ -19,7 +21,8 @@ type Movie = {
 
 type SearchResult = {
   Search?: Array<Movie>
-  totalResults: string
+  totalResults?: string
+  Error?: string
 }
 
 export const Database = () => {
@@ -31,7 +34,7 @@ export const Database = () => {
   const incPage = useStore(state => state.incPage)
   const decPage = useStore(state => state.decPage)
   const resetPage = useStore(state => state.resetPage)
-  const { isLoading, data, refetch } = useQuery<SearchResult>({
+  const { isLoading, data } = useQuery<SearchResult>({
     queryKey: ['searchData', search, page],
     enabled: !!search,
     placeholderData: keepPreviousData,
@@ -43,6 +46,7 @@ export const Database = () => {
 
   return (
     <VStack gap={4}>
+      <Heading>Movie Search</Heading>
       <HStack w="full">
         <Input
           placeholder="Search Movie Title"
@@ -65,47 +69,26 @@ export const Database = () => {
       </HStack>
       {data && (
         <VStack w="full" gap={4}>
-          <HStack w="full" justifyContent="end">
-            <Text>{`${Math.min(page * 10, Number(data?.totalResults))}/${data?.totalResults}`}</Text>
-            <HStack>
-              <IconButton
-                icon={<ArrowBackIcon />}
-                aria-label="go to previous page"
-                isDisabled={page === 1}
-                onClick={decPage}
-              />
-              <IconButton
-                icon={<ArrowForwardIcon />}
-                aria-label="go to next page"
-                isDisabled={Number(data?.totalResults) - page * 10 <= 0}
-                onClick={incPage}
-              />
+          {Number(data.totalResults) > PAGE_SIZE && (
+            <HStack w="full" justifyContent="end">
+              <Text>{`${Math.min(page * PAGE_SIZE, Number(data.totalResults))}/${data.totalResults}`}</Text>
+              <HStack>
+                <IconButton
+                  icon={<ArrowBackIcon />}
+                  aria-label="go to previous page"
+                  isDisabled={page === 1}
+                  onClick={decPage}
+                />
+                <IconButton
+                  icon={<ArrowForwardIcon />}
+                  aria-label="go to next page"
+                  isDisabled={Number(data.totalResults) - page * PAGE_SIZE <= 0}
+                  onClick={incPage}
+                />
+              </HStack>
             </HStack>
-          </HStack>
-          {data?.Search?.map(movie => (
-            <HStack
-              w="full"
-              alignItems="start"
-              p={2}
-              border="1px solid"
-              borderColor="gray.400"
-              borderRadius="md"
-            >
-              <Image
-                w={12}
-                h={14}
-                objectFit="cover"
-                src={movie.Poster}
-                alt={`${movie.Title} Poster`}
-              />
-              <VStack gap={0} alignItems="start">
-                <Text fontSize="xl" noOfLines={1}>
-                  {movie.Title}
-                </Text>
-                <Text color="gray.400">{`(${movie.Year})`}</Text>
-              </VStack>
-            </HStack>
-          ))}
+          )}
+          {data.Search?.map(movie => <MovieItem movie={movie} />)}
         </VStack>
       )}
     </VStack>
