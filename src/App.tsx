@@ -1,7 +1,12 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import './App.css'
 import { Layout } from './components/Layout'
-import { Database, Detail, Favorites } from './components/pages'
+import {
+  Database,
+  Detail,
+  Favorites,
+  ErrorPage as Error,
+} from './components/pages'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Route } from './constants'
 
@@ -9,6 +14,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
+    errorElement: <Error />,
     children: [
       {
         path: '/',

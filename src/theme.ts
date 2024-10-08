@@ -8,9 +8,6 @@ export const theme = extendTheme({
         height: '100vh',
         color: 'white',
       },
-      a: {
-        color: 'white',
-      },
     },
   },
 })

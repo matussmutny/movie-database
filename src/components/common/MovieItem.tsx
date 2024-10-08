@@ -4,27 +4,28 @@ import {
   Image,
   Text,
   Link as ChakraLink,
+  StackProps,
 } from '@chakra-ui/react'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { Movie } from '../../types'
-import { ReactNode } from 'react'
+import { PropsWithChildren } from 'react'
 import { Route } from '../../constants'
 
-interface MovieItemProps {
+interface MovieItemProps extends StackProps, PropsWithChildren {
   movie: Movie
-  rightElement?: ReactNode
 }
 
-export const MovieItem = ({ movie, rightElement }: MovieItemProps) => {
+export const MovieItem = ({ movie, children, ...props }: MovieItemProps) => {
   return (
     <HStack
       w="full"
-      alignItems="start"
+      alignItems="center"
       justifyContent="space-between"
       p={2}
       border="1px solid"
       borderColor="gray.400"
       borderRadius="md"
+      {...props}
     >
       <HStack>
         <Image
@@ -46,7 +47,7 @@ export const MovieItem = ({ movie, rightElement }: MovieItemProps) => {
           <Text color="gray.400">{`(${movie.Year})`}</Text>
         </VStack>
       </HStack>
-      {rightElement}
+      {children}
     </HStack>
   )
 }
